@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  name: MyString
+  n_album: 1
+  duration: MyString
+  rating: 1
+  references: 
+
+two:
+  name: MyString
+  n_album: 1
+  duration: MyString
+  rating: 1
+  references: 
