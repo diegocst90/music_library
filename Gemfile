@@ -21,6 +21,7 @@ group :assets do
   gem "therubyracer"
   gem "less-rails"
   gem 'bootstrap-sass', '~> 2.3.1.0'
+  gem 'compass-rails'
 end
 
 gem 'jquery-rails'
