@@ -6,18 +6,18 @@ class Api::AlbumsController < ApplicationController
   end
   
   def show
-    respond_with Artist.find(params[:id])
+    respond_with Album.find(params[:id])
   end
   
   def create
-    respond_with Artist.create(params[:entry])
+    respond_with Album.create(params[:entry])
   end
 
   def update
-    respond_with Artist.update(params[:id], params[:entry])
+    respond_with Album.update(params[:id], params[:entry])
   end
 
   def destroy
-    respond_with Artist.destroy(params[:id])
+    respond_with Album.destroy(params[:id])
   end
 end
