@@ -7,6 +7,7 @@ Current technologies used>
 - Ruby on Rails 3.2.12
 - Backbone
 - Sass
+- Compass
 - Twitter Bootstrap
 - I18n
 - CoffeeScript
