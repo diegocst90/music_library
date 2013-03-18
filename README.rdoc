@@ -1,6 +1,6 @@
 == Music Library
 
-Demo application for Learning purposes about creating One-single-page applications using a lot of recents technologies focused on UI/UX.
+Demo application for Learning purposes about creating single-page applications using a lot of recent technologies focused on UI/UX.
 
 Current technologies used>
 
