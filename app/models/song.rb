@@ -3,7 +3,7 @@ class Song < ActiveRecord::Base
   belongs_to :album
   
   validates :name, :presence=>true
-  validates :n_album, :presence=>true
+  validates :n_album, :presence=>true, :numericality=>{:greater_than=>0}
   validates :duration, :presence=>true
   validates :album, :presence=>true
   

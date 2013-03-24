@@ -20,6 +20,15 @@ describe Song do
     expect((wrong_song.errors.get :duration).to_a).not_to include(I18n.t('activerecord.errors.models.song.attributes.duration.invalid_format'))
   end
   
+  #There should be an error if the # of song is less or equal than 0
+  def should_be_wrong_on_n_album_value(wrong_song = @wrong_song)
+    expect((wrong_song.errors.get :n_album).to_a).to include(I18n.t('errors.messages.greater_than', :count=>0))
+  end
+  
+  def should_be_ok_on_n_album_value(wrong_song = @wrong_song)
+    expect((wrong_song.errors.get :n_album).to_a).not_to include(I18n.t('errors.messages.greater_than', :count=>0))
+  end
+  
   #Method to build 1 artist, 1 genre and 1 album
   def build_demo_data
     @artist = Artist.create!(name: "Demo artist")
@@ -54,20 +63,23 @@ describe Song do
       should_be_saved
     end
     
+    it "should validate # song greater than 0" do
+      @wrong_song = Song.create(name: "Greater than 0", duration: "04:40", n_album: 0, album: @album)
+      should_be_wrong_on_n_album_value
+      
+      @wrong_song = Song.create(name: "Greater than 0", duration: "04:40", n_album: 3, album: @album)
+      should_be_ok_on_n_album_value
+    end
+    
     it "should validate the format of duration: XX:XX" do
-      @wrong_song = Song.create(name: "Demo name1", duration: "Wrong", n_album: 3, album: @album)
-      should_be_wrong_on_duration_format
+      #wrong cases
+      %w( "Wrong" "1232" "03:321x" "55055,h5").each do |wrong_duration|
+        @wrong_song = Song.create(name: "Demo name", duration: wrong_duration, n_album: 3, album: @album)
+        should_be_wrong_on_duration_format
+      end
       
-      @wrong_song = Song.create(name: "Demo name2", duration: "1232", n_album: 3, album: @album)
-      should_be_wrong_on_duration_format
-      
-      @wrong_song = Song.create(name: "Demo name3", duration: "03:321x", n_album: 3, album: @album)
-      should_be_wrong_on_duration_format
-      
-      @wrong_song = Song.create(name: "Demo name4", duration: "55055,h5", n_album: 3, album: @album)
-      should_be_wrong_on_duration_format
-      
-      @wrong_song = Song.create(name: "Demo name5", duration: "04:40", n_album: 3, album: @album)
+      #correct case
+      @wrong_song = Song.create(name: "Correct duration", duration: "04:40", n_album: 3, album: @album)
       should_be_ok_on_duration_format
     end
   end
