@@ -56,15 +56,4 @@ ActiveRecord::Schema.define(:version => 20130318015506) do
     t.foreign_key ["album_id"], "albums", ["id"], :on_update => :restrict, :on_delete => :restrict, :name => "fk_songs_album_id"
   end
 
-  create_table "todo", :force => true do |t|
-    t.integer "n_pista",   :null => false
-    t.string  "cancion",   :null => false
-    t.string  "duracion",  :null => false
-    t.string  "artista",   :null => false
-    t.string  "album",     :null => false
-    t.integer "anho",      :null => false
-    t.string  "genero",    :null => false
-    t.integer "puntacion", :null => false
-  end
-
 end

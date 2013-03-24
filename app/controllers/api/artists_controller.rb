@@ -10,11 +10,11 @@ class Api::ArtistsController < ApplicationController
   end
 
   def create
-    respond_with Artist.create(params[:entry])
+    respond_with Artist.create(params[:artist])
   end
 
   def update
-    respond_with Artist.update(params[:id], params[:entry])
+    respond_with Artist.update(params[:id], params[:artist])
   end
 
   def destroy

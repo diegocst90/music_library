@@ -41,3 +41,10 @@ gem 'jquery-rails'
 # To use debugger
 # gem 'debugger'
 gem 'backbone-on-rails'
+
+group :development, :test do
+  gem 'rspec-rails'
+end
+group :production do
+  gem 'thin'
+end

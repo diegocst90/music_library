@@ -10,11 +10,11 @@ class Api::AlbumsController < ApplicationController
   end
   
   def create
-    respond_with Album.create(params[:entry])
+    respond_with Album.create(params[:album])
   end
 
   def update
-    respond_with Album.update(params[:id], params[:entry])
+    respond_with Album.update(params[:id], params[:album])
   end
 
   def destroy
