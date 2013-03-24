@@ -1,5 +1,5 @@
 class Album < ActiveRecord::Base
-  attr_accessible :image_url, :name, :year
+  attr_accessible :image_url, :name, :year, :artist, :genre
   belongs_to :genre
   belongs_to :artist
   has_many :songs

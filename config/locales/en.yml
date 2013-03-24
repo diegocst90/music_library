@@ -6,3 +6,11 @@ en:
   title_app: "Diego Castillo's Database"
   about_title: "About"
   about_content: "This is my own database for my music's library :)"
+
+  activerecord:
+    errors:
+      models:
+        song:
+          attributes:
+            duration:
+              invalid_format: "Fill the correct format for song's duration 'XX:XX'"

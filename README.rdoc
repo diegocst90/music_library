@@ -12,3 +12,4 @@ Current technologies used>
 - I18n
 - CoffeeScript
 - jQuery
+- rspec
