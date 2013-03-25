@@ -13,3 +13,6 @@ Current technologies used>
 - CoffeeScript
 - jQuery
 - rspec
+- Cucumber
+- Capybara
+- Selenium
