@@ -33,7 +33,7 @@ describe Song do
   def build_demo_data
     @artist = Artist.create!(name: "Demo artist")
     @genre = Genre.create!(name: "Demo genre")
-    @album = Album.create(name: "Demo album", year: "2006", genre: @genre, artist: @artist)
+    @album = Album.create(name: "Demo album", year: 2006, genre: @genre, artist: @artist)
   end
   
   describe "Validations" do
@@ -73,7 +73,7 @@ describe Song do
     
     it "should validate the format of duration: XX:XX" do
       #wrong cases
-      %w( "Wrong" "1232" "03:321x" "55055,h5").each do |wrong_duration|
+      ["Wrong","1232","03:321x","55055,h5"].each do |wrong_duration|
         @wrong_song = Song.create(name: "Demo name", duration: wrong_duration, n_album: 3, album: @album)
         should_be_wrong_on_duration_format
       end

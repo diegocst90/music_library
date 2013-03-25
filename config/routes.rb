@@ -63,6 +63,7 @@ DemoBackbone::Application.routes.draw do
     resources :artists do
       resources :albums
     end
+    resources :genres
   end
   
   root :to => 'home#index'

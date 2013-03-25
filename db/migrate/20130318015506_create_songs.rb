@@ -6,7 +6,7 @@ class CreateSongs < ActiveRecord::Migration
       t.string :duration, :null=>false
       t.integer :rating, :default=>0
       t.references :album, :null=>false
-
+      t.boolean :deleted, :default=>false
       t.timestamps
     end
   end

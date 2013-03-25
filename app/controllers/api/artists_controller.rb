@@ -6,18 +6,38 @@ class Api::ArtistsController < ApplicationController
   end
   
   def show
-    respond_with Artist.find(params[:id])
+    artist = Artist.find(params[:id]) rescue nil
+    opts = {}
+    opts[:status] = 422 if !artist
+    respond_with artist, opts
   end
 
   def create
-    respond_with Artist.create(params[:artist])
+    artist = Artist.new(params[:artist])
+    if artist.save
+      render :json=>artist
+    else
+      respond_with artist
+    end
   end
 
   def update
-    respond_with Artist.update(params[:id], params[:artist])
+    artist = Artist.find(params[:id]) rescue nil
+    if artist.blank?
+      render :json=>artist, :status=>422
+    else
+      artist.attributes = params[:artist]
+      if artist.save
+        render :json=>artist
+      else
+        respond_with artist, :status=>422
+      end
+    end
   end
 
   def destroy
-    respond_with Artist.destroy(params[:id])
+    opts = {:nothing=>true}
+    opts[:status] = 422 if !Artist.delete(params[:id])
+    render opts
   end
 end

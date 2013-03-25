@@ -6,18 +6,38 @@ class Api::AlbumsController < ApplicationController
   end
   
   def show
-    respond_with Album.find(params[:id])
+    album = Album.find(params[:id]) rescue nil
+    opts = {}
+    opts[:status] = 422 if !album
+    respond_with album, opts
   end
   
   def create
-    respond_with Album.create(params[:album])
+    album = Album.new(params[:album])
+    if album.save
+      render :json=>album
+    else
+      respond_with album
+    end
   end
 
   def update
-    respond_with Album.update(params[:id], params[:album])
+    album = Album.find(params[:id]) rescue nil
+    if album.blank?
+      render :json=>album, :status=>422
+    else
+      album.attributes = params[:album]
+      if album.save
+        render :json=>album
+      else
+        respond_with album, :status=>422
+      end
+    end
   end
 
   def destroy
-    respond_with Album.destroy(params[:id])
+    opts = {:nothing=>true}
+    opts[:status] = 422 if !Album.delete(params[:id])
+    render opts
   end
 end

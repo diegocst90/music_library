@@ -6,7 +6,7 @@ class CreateAlbums < ActiveRecord::Migration
       t.references :artist, :null=>false
       t.integer :year
       t.string :image_url
-
+      t.boolean :deleted, :default=>false
       t.timestamps
     end
     add_index :albums, :genre_id
