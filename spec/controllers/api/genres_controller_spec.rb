@@ -17,13 +17,13 @@ describe Api::GenresController do
       @genre3 = Genre.create(name: "Demo genre3", :description=>"Description3")
       @genre4 = Genre.create(name: "Demo genre4", :description=>"Description4")
       
-      get :index, :format => :json
+      xhr :get, :index
       expect_good_request
       expect_json(:eq, get_list_json_format([@genre1, @genre2, @genre3, @genre4]))
     end
    
     it "should return an empty array if there isn't any genre registered" do
-      get :index, :format => :json
+      xhr :get, :index
       expect_good_request
       expect_json(:eq, [])
     end
@@ -32,20 +32,20 @@ describe Api::GenresController do
     it "should return the info of the genre given by ID" do
       @genre = Genre.create(name: "Demo genre", description: "Description")
       
-      get :show, :id=>@genre.id, :format => :json
+      xhr :get, :show, :id=>@genre.id
       expect_good_request
       expect_json(:eq, convert_to_json(@genre))
     end
     
     it "should return a 422 error if the genre can't be found" do
-      get :show, :id=>1, :format => :json
+      xhr :get, :show, :id=>1
       expect_bad_request
     end
     
     #POST :create
     
     it "should not save a genre if all data is incorrect" do
-      post :create, :genre => {:name=>''}, :format => :json
+      xhr :post, :create, :genre => {:name=>''}
       expect_bad_request
       expect_json(:include, {
           "errors"=>{
@@ -58,7 +58,7 @@ describe Api::GenresController do
       @genre = Genre.create!(name: "Demo genre1", description: "Description1")
       
       ["Demo genre1","DEMO GENRE1"].each do |duplicated_name|
-        post :create, :genre => {:name=>duplicated_name, description: "Description1"}, :format => :json
+        xhr :post, :create, :genre => {:name=>duplicated_name, description: "Description1"}
         expect_bad_request
         expect_json(:include, {
             "errors"=>{
@@ -69,13 +69,13 @@ describe Api::GenresController do
     end
     
     it "should save an genre if all data is correct" do
-      post :create, :genre => {:name=>'Genre name', description: "Description"}, :format => :json
+      xhr :post, :create, :genre => {:name=>'Genre name', description: "Description"}
       expect_good_request
     end
     
     #PUT :update
     it "should not update an genre if it doesn't exist" do
-      put :update, :id=>1, :genre => {:name=>"New name", description: "Description"}, :format => :json
+      xhr :put, :update, :id=>1, :genre => {:name=>"New name", description: "Description"}
       expect_bad_request
     end
     
@@ -83,7 +83,7 @@ describe Api::GenresController do
       @genre1 = Genre.create(name: "Demo genre1")
       @genre2 = Genre.create(name: "Demo genre2")
       
-      put :update, :id=>@genre2.id, :genre => {:name=>"Demo genre1", description: "Description"}, :format => :json
+      xhr :put, :update, :id=>@genre2.id, :genre => {:name=>"Demo genre1", description: "Description"}
       expect_bad_request
       expect_json(:include, {
           "errors"=>{
@@ -97,7 +97,7 @@ describe Api::GenresController do
       @genre2 = Genre.create!(name: "Demo genre2")
       
       ["Demo genre2", "DEMO GENRE2"].each do |duplicated_name|
-        put :update, :id=>@genre1.id, :genre => {:name=>duplicated_name, description: "Description"}, :format => :json
+        xhr :put, :update, :id=>@genre1.id, :genre => {:name=>duplicated_name, description: "Description"}
         expect_bad_request
         expect_json(:include, {
             "errors"=>{
@@ -110,7 +110,7 @@ describe Api::GenresController do
     it "should update an genre if all data is correct" do
       @genre = Genre.create(name: "Demo genre")
       
-      put :update, :id=>@genre.id, :genre => {:name=>"Updated name", description: "Description"}, :format => :json
+      xhr :put, :update, :id=>@genre.id, :genre => {:name=>"Updated name", description: "Description"}
       expect_good_request
       expect_json(:include, {
           "name"=>"Updated name"
@@ -119,14 +119,14 @@ describe Api::GenresController do
     
     #DELETE :destroy
     it "should not delete an inexistent genre" do
-      delete :destroy, :id=>1, :format=> :json
+      xhr :delete, :destroy, :id=>1
       expect_bad_request
     end
     
     it "should delete a valid genre passed by ID" do
       @genre = Genre.create(name: "Demo genre", description: "Description")
       
-      delete :destroy, :id=>@genre.id, :format=> :json
+      xhr :delete, :destroy, :id=>@genre.id
       expect_good_request
     end
   end

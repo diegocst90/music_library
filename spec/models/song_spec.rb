@@ -29,6 +29,11 @@ describe Song do
     expect((wrong_song.errors.get :n_album).to_a).not_to include(I18n.t('errors.messages.greater_than', :count=>0))
   end
   
+  #There should be an error if the name already exists
+  def should_be_wrong_duplicated_name(wrong_song = @wrong_song)
+    expect((wrong_song.errors.get :name).to_a).to include(I18n.t('activerecord.errors.messages.taken'))
+  end
+  
   #Method to build 1 artist, 1 genre and 1 album
   def build_demo_data
     @artist = Artist.create!(name: "Demo artist")
@@ -81,6 +86,16 @@ describe Song do
       #correct case
       @wrong_song = Song.create(name: "Correct duration", duration: "04:40", n_album: 3, album: @album)
       should_be_ok_on_duration_format
+    end
+    
+    it "should validate duplicated songs of the same album" do
+      Song.create(name: "Demo name", duration: "04:40", n_album: 3, album: @album)
+      @wrong_song = Song.create(name: "Demo name", duration: "04:40", n_album: 3, album: @album)
+      should_be_wrong_duplicated_name
+      
+      @album2 = Album.create(name: "AlbumW", year: 2008, genre: @genre, artist: @artist)
+      @wrong_song = Song.create(name: "Demo name", duration: "04:40", n_album: 3, album: @album2)
+      should_be_saved
     end
   end
 end

@@ -20,6 +20,11 @@ describe Album do
     expect((wrong_album.errors.get :year).to_a).not_to include(I18n.t('errors.messages.greater_than', :count=>1930))
   end
   
+  #There should be an error if the name already exists
+  def should_be_wrong_duplicated_name(wrong_album = @wrong_album)
+    expect((wrong_album.errors.get :name).to_a).to include(I18n.t('activerecord.errors.messages.taken'))
+  end
+  
   #Method to build 1 artist, 1 genre
   def build_demo_data
     @artist = Artist.create!(name: "Demo artist")
@@ -59,6 +64,16 @@ describe Album do
       
       @wrong_album = Album.create(name: "Greater than 1930", year: 2006, genre: @genre, artist: @artist)
       should_be_ok_on_year_value
+    end
+    
+    it "should validate duplicated albums of the same artist" do
+      Album.create(name: "Album1", year: 2006, genre: @genre, artist: @artist)
+      @wrong_album = Album.create(name: "Album1", year: 2008, genre: @genre, artist: @artist)
+      should_be_wrong_duplicated_name
+      
+      @artist2 = Artist.create!(name: "Demo artist2")
+      @wrong_album = Album.create(name: "Album1", year: 2008, genre: @genre, artist: @artist2)
+      should_be_saved
     end
   end
 end

@@ -17,13 +17,13 @@ describe Api::ArtistsController do
       @artist3 = Artist.create(name: "Demo artist3")
       @artist4 = Artist.create(name: "Demo artist4")
       
-      get :index, :format => :json
+      xhr :get, :index
       expect_good_request
       expect_json(:eq, get_list_json_format([@artist1, @artist2, @artist3, @artist4]))
     end
    
     it "should return an empty array if there isn't any artist registered" do
-      get :index, :format => :json
+      xhr :get, :index
       expect_good_request
       expect_json(:eq, [])
     end
@@ -32,20 +32,20 @@ describe Api::ArtistsController do
     it "should return the info of the artist given by ID" do
       @artist = Artist.create(name: "Demo artist")
       
-      get :show, :id=>@artist.id, :format => :json
+      xhr :get, :show, :id=>@artist.id
       expect_good_request
       expect_json(:eq, convert_to_json(@artist))
     end
     
     it "should return a 422 error if the artist can't be found" do
-      get :show, :id=>1, :format => :json
+      xhr :get, :show, :id=>1
       expect_bad_request
     end
     
     #POST :create
     
     it "should not save an artist if all data is incorrect" do
-      post :create, :artist => {:name=>''}, :format => :json
+      xhr :post, :create, :artist => {:name=>''}
       expect_bad_request
       expect_json(:include, {
           "errors"=>{
@@ -58,7 +58,7 @@ describe Api::ArtistsController do
       @artist = Artist.create!(name: "Demo artist1")
       
       ["Demo artist1","DEMO ARTIST1"].each do |duplicated_name|
-        post :create, :artist => {:name=>duplicated_name}, :format => :json
+        xhr :post, :create, :artist => {:name=>duplicated_name}
         expect_bad_request
         expect_json(:include, {
             "errors"=>{
@@ -69,13 +69,13 @@ describe Api::ArtistsController do
     end
     
     it "should save an artist if all data is correct" do
-      post :create, :artist => {:name=>'Artist name'}, :format => :json
+      xhr :post, :create, :artist => {:name=>'Artist name'}
       expect_good_request
     end
     
     #PUT :update
     it "should not update an artist if it doesn't exist" do
-      put :update, :id=>1, :artist => {:name=>"New name"}, :format => :json
+      xhr :put, :update, :id=>1, :artist => {:name=>"New name"}
       expect_bad_request
     end
     
@@ -83,7 +83,7 @@ describe Api::ArtistsController do
       @artist1 = Artist.create(name: "Demo artist1")
       @artist2 = Artist.create(name: "Demo artist2")
       
-      put :update, :id=>@artist2.id, :artist => {:name=>"Demo artist1"}, :format => :json
+      xhr :put, :update, :id=>@artist2.id, :artist => {:name=>"Demo artist1"}
       expect_bad_request
       expect_json(:include, {
           "errors"=>{
@@ -97,7 +97,7 @@ describe Api::ArtistsController do
       @artist2 = Artist.create!(name: "Demo artist2")
       
       ["Demo artist2", "DEMO ARTIST2"].each do |duplicated_name|
-        put :update, :id=>@artist1.id, :artist => {:name=>duplicated_name}, :format => :json
+        xhr :put, :update, :id=>@artist1.id, :artist => {:name=>duplicated_name}
         expect_bad_request
         expect_json(:include, {
             "errors"=>{
@@ -110,7 +110,7 @@ describe Api::ArtistsController do
     it "should update an artist if all data is correct" do
       @artist = Artist.create(name: "Demo artist")
       
-      put :update, :id=>@artist.id, :artist => {:name=>"Updated name"}, :format => :json
+      xhr :put, :update, :id=>@artist.id, :artist => {:name=>"Updated name"}
       expect_good_request
       expect_json(:include, {
           "name"=>"Updated name"
@@ -119,14 +119,14 @@ describe Api::ArtistsController do
     
     #DELETE :destroy
     it "should not delete an inexistent artist" do
-      delete :destroy, :id=>1, :format=> :json
+      xhr :delete, :destroy, :id=>1
       expect_bad_request
     end
     
     it "should delete a valid artist passed by ID" do
       @artist = Artist.create(name: "Demo artist")
       
-      delete :destroy, :id=>@artist.id, :format=> :json
+      xhr :delete, :destroy, :id=>@artist.id
       expect_good_request
     end
   end

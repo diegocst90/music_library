@@ -28,13 +28,13 @@ describe Api::AlbumsController do
       @album3 = Album.create(name: "Demo album3", year: 2010, genre: @genre, artist: @artist)
       @album4 = Album.create(name: "Demo album4", year: 2012, genre: @genre, artist: @artist)
       
-      get :index, :artist_id=>@artist.id, :format => :json
+      xhr :get, :index, :artist_id=>@artist.id
       expect_good_request
       expect_json(:eq, get_list_json_format([@album1, @album2, @album3, @album4]))
     end
     
     it "should return an empty array if there isn't any album registered" do
-      get :index, :artist_id=>@artist.id, :format => :json
+      xhr :get, :index, :artist_id=>@artist.id
       expect_good_request
       expect_json(:eq, [])
     end
@@ -43,19 +43,19 @@ describe Api::AlbumsController do
     it "should return the info of the album given by ID" do
       @album = Album.create(name: "Demo album1", year: 2006, genre: @genre, artist: @artist)
       
-      get :show, :id=>@album.id, :artist_id=>@artist.id, :format => :json
+      xhr :get, :show, :id=>@album.id, :artist_id=>@artist.id
       expect_good_request
       expect_json(:eq, convert_to_json(@album))
     end
     
     it "should return a 422 error if the album can't be found" do
-      get :show, :id=>1, :artist_id=>@artist.id, :format => :json
+      xhr :get, :show, :id=>1, :artist_id=>@artist.id
       expect_bad_request
     end
     
     #POST :create
     it "should not save an album if all data is incorrect" do
-      post :create, :artist_id=>@artist.id, :album => {:year=>2000, :genre_id=>@genre.id}, :format => :json
+      xhr :post, :create, :artist_id=>@artist.id, :album => {:year=>2000, :genre_id=>@genre.id}
       expect_bad_request
       expect_json(:include,{
           "errors"=>{
@@ -71,7 +71,7 @@ describe Api::AlbumsController do
       
       #Same artist, we should not allow it
       ["Album name", "ALBUM NAME"].each do |duplicated_name|
-        post :create, :artist_id=>@artist.id, :album => {:name=>duplicated_name, :year=>2000, :artist_id=>@artist.id, :genre_id=>@genre.id}, :format => :json
+        xhr :post, :create, :artist_id=>@artist.id, :album => {:name=>duplicated_name, :year=>2000, :artist_id=>@artist.id, :genre_id=>@genre.id}
         expect_bad_request
         expect_json(:include,{
             "errors"=>{
@@ -80,25 +80,25 @@ describe Api::AlbumsController do
           })
       end
       #Another artist should be allowed
-      post :create, :artist_id=>@artist2.id, :album => {:name=>"Album name", :year=>2000, :artist_id=>@artist2.id, :genre_id=>@genre.id}, :format => :json
+      xhr :post, :create, :artist_id=>@artist2.id, :album => {:name=>"Album name", :year=>2000, :artist_id=>@artist2.id, :genre_id=>@genre.id}
       expect_good_request
     end
     
     it "should save an album if all data is correct" do
-      post :create, :artist_id=>@artist.id, :album => {:name=>'Album name', :year=>2000, :artist_id=>@artist.id, :genre_id=>@genre.id}, :format => :json
+      xhr :post, :create, :artist_id=>@artist.id, :album => {:name=>'Album name', :year=>2000, :artist_id=>@artist.id, :genre_id=>@genre.id}
       expect_good_request
     end
     
     #PUT :update
     it "should not update an album if it doesn't exist" do
-      put :update, :artist_id=>@artist.id, :id=>1, :album => {:year=>2000}, :format => :json
+      xhr :put, :update, :artist_id=>@artist.id, :id=>1, :album => {:year=>2000}
       expect_bad_request
     end
     
     it "should not update an album if all data is incorrect" do
       @album = Album.create(name: "Demo album", year: 2006, genre: @genre, artist: @artist)
       
-      put :update, :artist_id=>@artist.id, :id=>@album.id, :album => {:year=>1901}, :format => :json
+      xhr :put, :update, :artist_id=>@artist.id, :id=>@album.id, :album => {:year=>1901}
       expect_bad_request
       expect_json(:include,{
           "errors"=>{
@@ -113,7 +113,7 @@ describe Api::AlbumsController do
       @album2 = Album.create(name: "Album name2", year: 2006, genre: @genre, artist: @artist)
       
       ["Album name1", "ALBUM NAME1"].each do |duplicated_name|
-        put :update, :artist_id=>@artist.id, :id=>@album2.id, :album => {:name=>duplicated_name}, :format => :json
+        xhr :put, :update, :artist_id=>@artist.id, :id=>@album2.id, :album => {:name=>duplicated_name}
         expect_bad_request
         expect_json(:include,{
             "errors"=>{
@@ -125,14 +125,14 @@ describe Api::AlbumsController do
       #Another artist should be allowed
       @album3 = Album.create(name: "Album name3", year: 2006, genre: @genre, artist: @artist2)
       
-      put :update, :artist_id=>@artist2.id, :id=>@album3.id, :album => {:name=>"Album name1"}, :format => :json
+      xhr :put, :update, :artist_id=>@artist2.id, :id=>@album3.id, :album => {:name=>"Album name1"}
       expect_good_request
     end
     
     it "should update an album if all data is correct" do
       @album = Album.create(name: "Demo album", year: 2006, genre: @genre, artist: @artist)
       
-      put :update, :artist_id=>@artist.id, :id=>@album.id, :album => {:year=>2000}, :format => :json
+      xhr :put, :update, :artist_id=>@artist.id, :id=>@album.id, :album => {:year=>2000}
       expect_good_request
       expect_json(:include,{
           "year"=>2000
@@ -141,14 +141,14 @@ describe Api::AlbumsController do
     
     #DELETE :destroy
     it "should not delete an inexistent album" do
-      delete :destroy, :id=>1, :artist_id=>@artist.id, :format=> :json
+      xhr :delete, :destroy, :id=>1, :artist_id=>@artist.id, :format=> :json
       expect_bad_request
     end
     
     it "should delete a valid album passed by ID" do
       @album = Album.create(name: "Demo album", year: 2006, genre: @genre, artist: @artist)
       
-      delete :destroy, :id=>@album.id, :artist_id=>@artist.id, :format=> :json
+      xhr :delete, :destroy, :id=>@album.id, :artist_id=>@artist.id, :format=> :json
       expect_good_request
     end
   end
