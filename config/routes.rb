@@ -61,7 +61,9 @@ DemoBackbone::Application.routes.draw do
   
   namespace :api do
     resources :artists do
-      resources :albums
+      resources :albums do
+        resources :songs
+      end
     end
     resources :genres
   end

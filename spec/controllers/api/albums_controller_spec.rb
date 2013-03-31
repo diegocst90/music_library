@@ -98,14 +98,14 @@ describe Api::AlbumsController do
     
     #DELETE :destroy
     it "should not delete an inexistent album" do
-      xhr :delete, :destroy, :id=>1, :artist_id=>@artist.id, :format=> :json
+      xhr :delete, :destroy, :id=>1, :artist_id=>@artist.id
       expect_bad_request
     end
     
     it "should delete a valid album passed by ID" do
       album = FactoryGirl.create(:album, artist_id: @artist.id)
       
-      xhr :delete, :destroy, :id=>album.id, :artist_id=>@artist.id, :format=> :json
+      xhr :delete, :destroy, :id=>album.id, :artist_id=>@artist.id
       expect_good_request
     end
   end
