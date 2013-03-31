@@ -6,10 +6,10 @@ class Song < ActiveRecord::Base
   
   validates :name, :presence=>true, :uniqueness=>{:scope=>:album_id, :case_sensitive=>false}
   validates :n_album, :presence=>true, :numericality=>{:greater_than=>0}
+  validates :rating, :presence=>true, :numericality=>{:greater_than_or_equal_to=>0, :less_than_or_equal_to=>5}
   validates :duration, :presence=>true
   validates :album, :presence=>true
-  
-  before_save :verify_duration_format
+  validate :verify_duration_format
   
   default_scope where :deleted=>false
   
@@ -18,7 +18,6 @@ class Song < ActiveRecord::Base
     #Correct format for duration XX:XX
     if !(/([01]?[0-9]|2[0-3]):[0-5][0-9]/.match(duration).present? && duration.to_s.length == 5)
       errors.add(:duration, I18n.t('activerecord.errors.models.song.attributes.duration.invalid_format'))
-      return false
     end
   end
 end

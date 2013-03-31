@@ -18,13 +18,32 @@ module SharedMethods
     expect(results).to send(method, value_expected)
   end
   
-  #Convert list of objects to array of jsons
-  #The method convert_to_json SHOULD BE implemented in every test you want to run
-  def get_list_json_format(objects)
+  #general conversor of models or hashes (only accessible attributes) of a determinated model
+  def convert_to_json(object, class_name)
+    if object.is_a? ActiveRecord::Base
+      ActiveSupport::JSON.decode(object.to_json)
+    elsif object.is_a? Hash
+      results = {}
+      list_attrs_accessibles = class_name.singularize.classify.constantize.accessible_attributes.to_a.delete_if {|t| t.blank?}
+      list_attrs_accessibles.each do |t| 
+        results[t] = object[t.to_sym] if object[t.to_sym].present?
+      end
+      results
+    end
+  end
+  
+  #Convert list of objects (of a determinated model) to array of jsons
+  def get_list_json_format(objects, model)
     results = []
     objects.each do |object|
-      results << convert_to_json(object)
+      results << convert_to_json(object, model)
     end
     return results
+  end
+  
+  #General method to validate one column of a Model
+  def validate_column_errors(model, column, should_pass, i18n_index, params = {})
+    method = (should_pass)? :not_to : :to
+    expect((model.errors.get column).to_a).send method, include(I18n.t(i18n_index, params))
   end
 end

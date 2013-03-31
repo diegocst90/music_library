@@ -16,3 +16,4 @@ Current technologies used>
 - Cucumber
 - Capybara
 - Selenium
+- FactoryGirl

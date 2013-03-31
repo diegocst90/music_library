@@ -3,23 +3,15 @@ require 'spec_helper'
 describe Api::ArtistsController do
   include SharedMethods
   
-  #Convert an Artist object to json. Used by get_list_json_format
-  def convert_to_json(artist)
-    {"created_at"=>artist.created_at.to_json.gsub("\"",""), "deleted"=>false, "id"=>artist.id, "name"=>artist.name, "updated_at"=>artist.updated_at.to_json.gsub("\"","")}
-  end
-  
   describe "REST functions" do
     
     #GET :index
     it "should return all Artists" do
-      @artist1 = Artist.create(name: "Demo artist1")
-      @artist2 = Artist.create(name: "Demo artist2")
-      @artist3 = Artist.create(name: "Demo artist3")
-      @artist4 = Artist.create(name: "Demo artist4")
+      list_artists = FactoryGirl.create_list :artist, 4
       
       xhr :get, :index
       expect_good_request
-      expect_json(:eq, get_list_json_format([@artist1, @artist2, @artist3, @artist4]))
+      expect_json(:eq, get_list_json_format(list_artists, "artist"))
     end
    
     it "should return an empty array if there isn't any artist registered" do
@@ -30,11 +22,11 @@ describe Api::ArtistsController do
     
     #GET :index with :id
     it "should return the info of the artist given by ID" do
-      @artist = Artist.create(name: "Demo artist")
+      artist = FactoryGirl.create :artist
       
-      xhr :get, :show, :id=>@artist.id
+      xhr :get, :show, :id=>artist.id
       expect_good_request
-      expect_json(:eq, convert_to_json(@artist))
+      expect_json(:eq, convert_to_json(artist, "artist"))
     end
     
     it "should return a 422 error if the artist can't be found" do
@@ -54,36 +46,29 @@ describe Api::ArtistsController do
         })
     end
     
-    it "should not save a duplicated artist" do
-      @artist = Artist.create!(name: "Demo artist1")
-      
-      ["Demo artist1","DEMO ARTIST1"].each do |duplicated_name|
-        xhr :post, :create, :artist => {:name=>duplicated_name}
-        expect_bad_request
-        expect_json(:include, {
-            "errors"=>{
-              "name"=>[I18n.t('activerecord.errors.messages.taken')]
-            }
-          })
-      end
+    it "should save an artist if all data is correct" do
+      xhr :post, :create, :artist => FactoryGirl.attributes_for(:artist)
+      expect_good_request
     end
     
-    it "should save an artist if all data is correct" do
-      xhr :post, :create, :artist => {:name=>'Artist name'}
-      expect_good_request
+    it "should return the json result of the artist created" do
+      new_attributes = FactoryGirl.attributes_for(:artist)
+      xhr :post, :create, :artist => new_attributes
+
+      expect_json(:include, convert_to_json(new_attributes, "artist"))
     end
     
     #PUT :update
     it "should not update an artist if it doesn't exist" do
-      xhr :put, :update, :id=>1, :artist => {:name=>"New name"}
+      xhr :put, :update, :id=>1, :artist => FactoryGirl.attributes_for(:artist)
       expect_bad_request
     end
     
     it "should not update an artist if all data is incorrect" do
-      @artist1 = Artist.create(name: "Demo artist1")
-      @artist2 = Artist.create(name: "Demo artist2")
+      FactoryGirl.create(:artist, :defined_name)
+      artist1 = FactoryGirl.create(:artist)
       
-      xhr :put, :update, :id=>@artist2.id, :artist => {:name=>"Demo artist1"}
+      xhr :put, :update, :id=>artist1.id, :artist => FactoryGirl.attributes_for(:artist, :defined_name)
       expect_bad_request
       expect_json(:include, {
           "errors"=>{
@@ -92,28 +77,13 @@ describe Api::ArtistsController do
         })
     end
     
-    it "should not updated to a duplicated artist" do
-      @artist1 = Artist.create!(name: "Demo artist1")
-      @artist2 = Artist.create!(name: "Demo artist2")
-      
-      ["Demo artist2", "DEMO ARTIST2"].each do |duplicated_name|
-        xhr :put, :update, :id=>@artist1.id, :artist => {:name=>duplicated_name}
-        expect_bad_request
-        expect_json(:include, {
-            "errors"=>{
-              "name"=>[I18n.t('activerecord.errors.messages.taken')]
-            }
-          })
-      end
-    end
-    
     it "should update an artist if all data is correct" do
-      @artist = Artist.create(name: "Demo artist")
-      
-      xhr :put, :update, :id=>@artist.id, :artist => {:name=>"Updated name"}
+      artist = FactoryGirl.create(:artist)
+      new_attributes = FactoryGirl.attributes_for(:artist, :defined_name)
+      xhr :put, :update, :id=>artist.id, :artist => new_attributes
       expect_good_request
       expect_json(:include, {
-          "name"=>"Updated name"
+          "name"=>new_attributes[:name]
         })
     end
     
@@ -124,9 +94,9 @@ describe Api::ArtistsController do
     end
     
     it "should delete a valid artist passed by ID" do
-      @artist = Artist.create(name: "Demo artist")
+      artist = FactoryGirl.create :artist
       
-      xhr :delete, :destroy, :id=>@artist.id
+      xhr :delete, :destroy, :id=>artist.id
       expect_good_request
     end
   end

@@ -43,12 +43,14 @@ gem 'jquery-rails'
 gem 'backbone-on-rails'
 
 group :development, :test do
+  gem 'mocha', :require=>false
   gem 'rspec-rails'
   gem 'capybara'
   gem 'selenium-webdriver'
   gem 'cucumber-rails', :require => false
-  # database_cleaner is not required, but highly recommended
   gem 'database_cleaner'
+  gem 'factory_girl_rails'
+  gem 'faker'
 end
 
 group :production do

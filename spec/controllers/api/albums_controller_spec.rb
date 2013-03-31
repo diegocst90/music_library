@@ -3,15 +3,10 @@ require 'spec_helper'
 describe Api::AlbumsController do
   include SharedMethods
   
-  #Convert an Album object to json. Used by get_list_json_format
-  def convert_to_json(album)
-    {"artist_id"=>album.artist_id, "created_at"=>album.created_at.to_json.gsub("\"",""), "deleted"=>false, "genre_id"=>album.genre_id, "id"=>album.id, "image_url"=>nil, "name"=>album.name, "updated_at"=>album.updated_at.to_json.gsub("\"",""), "year"=>album.year}
-  end
-  
   #Method to build 1 artist, 1 genre
   def build_demo_data
-    @artist = Artist.create!(name: "Demo artist")
-    @genre = Genre.create!(name: "Demo genre")
+    @artist = FactoryGirl.create :artist
+    @genre = FactoryGirl.create :genre
   end
   
   describe "REST functions" do
@@ -23,14 +18,11 @@ describe Api::AlbumsController do
     
     #GET :index
     it "should return all albums from an Artist" do
-      @album1 = Album.create(name: "Demo album1", year: 2006, genre: @genre, artist: @artist)
-      @album2 = Album.create(name: "Demo album2", year: 2008, genre: @genre, artist: @artist)
-      @album3 = Album.create(name: "Demo album3", year: 2010, genre: @genre, artist: @artist)
-      @album4 = Album.create(name: "Demo album4", year: 2012, genre: @genre, artist: @artist)
+      list_albums = FactoryGirl.create_list :album, 4, artist_id: @artist.id
       
       xhr :get, :index, :artist_id=>@artist.id
       expect_good_request
-      expect_json(:eq, get_list_json_format([@album1, @album2, @album3, @album4]))
+      expect_json(:eq, get_list_json_format(list_albums, "albums"))
     end
     
     it "should return an empty array if there isn't any album registered" do
@@ -41,11 +33,11 @@ describe Api::AlbumsController do
     
     #GET :index with :id
     it "should return the info of the album given by ID" do
-      @album = Album.create(name: "Demo album1", year: 2006, genre: @genre, artist: @artist)
+      album = FactoryGirl.create(:album, artist_id: @artist.id)
       
-      xhr :get, :show, :id=>@album.id, :artist_id=>@artist.id
+      xhr :get, :show, :id=>album.id, :artist_id=>@artist.id
       expect_good_request
-      expect_json(:eq, convert_to_json(@album))
+      expect_json(:eq, convert_to_json(album, "album"))
     end
     
     it "should return a 422 error if the album can't be found" do
@@ -65,40 +57,27 @@ describe Api::AlbumsController do
         })
     end
     
-    it "should not save a duplicated album" do
-      @artist2 = Artist.create!(name: "Demo artist2")
-      @album = Album.create(name: "Album name", year: 2006, genre: @genre, artist: @artist)
-      
-      #Same artist, we should not allow it
-      ["Album name", "ALBUM NAME"].each do |duplicated_name|
-        xhr :post, :create, :artist_id=>@artist.id, :album => {:name=>duplicated_name, :year=>2000, :artist_id=>@artist.id, :genre_id=>@genre.id}
-        expect_bad_request
-        expect_json(:include,{
-            "errors"=>{
-              "name"=>[I18n.t('activerecord.errors.messages.taken')]
-            }
-          })
-      end
-      #Another artist should be allowed
-      xhr :post, :create, :artist_id=>@artist2.id, :album => {:name=>"Album name", :year=>2000, :artist_id=>@artist2.id, :genre_id=>@genre.id}
+    it "should save an album if all data is correct" do
+      xhr :post, :create, :artist_id=>@artist.id, :album => FactoryGirl.attributes_for(:album, artist_id: @artist.id, genre_id: @genre.id)
       expect_good_request
     end
     
-    it "should save an album if all data is correct" do
-      xhr :post, :create, :artist_id=>@artist.id, :album => {:name=>'Album name', :year=>2000, :artist_id=>@artist.id, :genre_id=>@genre.id}
-      expect_good_request
+    it "should return the json result of the album created" do
+      new_attributes = FactoryGirl.attributes_for(:album, artist_id: @artist.id, genre_id: @genre.id)
+      xhr :post, :create, :artist_id=>@artist.id, :album => new_attributes
+      expect_json(:include, convert_to_json(new_attributes, "album"))
     end
     
     #PUT :update
     it "should not update an album if it doesn't exist" do
-      xhr :put, :update, :artist_id=>@artist.id, :id=>1, :album => {:year=>2000}
+      xhr :put, :update, :artist_id=>@artist.id, :id=>1, :album => FactoryGirl.attributes_for(:album, artist_id: @artist.id)
       expect_bad_request
     end
     
     it "should not update an album if all data is incorrect" do
-      @album = Album.create(name: "Demo album", year: 2006, genre: @genre, artist: @artist)
+      album = FactoryGirl.create(:album, artist_id: @artist.id)
       
-      xhr :put, :update, :artist_id=>@artist.id, :id=>@album.id, :album => {:year=>1901}
+      xhr :put, :update, :artist_id=>@artist.id, :id=>album.id, :album => {:year=>1901}
       expect_bad_request
       expect_json(:include,{
           "errors"=>{
@@ -107,35 +86,13 @@ describe Api::AlbumsController do
         })
     end
     
-    it "should not update to a duplicated album of the same artist" do
-      @artist2 = Artist.create!(name: "Demo artist2")
-      @album1 = Album.create(name: "Album name1", year: 2006, genre: @genre, artist: @artist)
-      @album2 = Album.create(name: "Album name2", year: 2006, genre: @genre, artist: @artist)
-      
-      ["Album name1", "ALBUM NAME1"].each do |duplicated_name|
-        xhr :put, :update, :artist_id=>@artist.id, :id=>@album2.id, :album => {:name=>duplicated_name}
-        expect_bad_request
-        expect_json(:include,{
-            "errors"=>{
-              "name"=>[I18n.t('activerecord.errors.messages.taken')]
-            }
-          })
-      end
-      
-      #Another artist should be allowed
-      @album3 = Album.create(name: "Album name3", year: 2006, genre: @genre, artist: @artist2)
-      
-      xhr :put, :update, :artist_id=>@artist2.id, :id=>@album3.id, :album => {:name=>"Album name1"}
-      expect_good_request
-    end
-    
     it "should update an album if all data is correct" do
-      @album = Album.create(name: "Demo album", year: 2006, genre: @genre, artist: @artist)
-      
-      xhr :put, :update, :artist_id=>@artist.id, :id=>@album.id, :album => {:year=>2000}
+      album = FactoryGirl.create(:album, artist_id: @artist.id)
+      new_attributes = FactoryGirl.attributes_for(:artist, :defined_name)
+      xhr :put, :update, :artist_id=>@artist.id, :id=>album.id, :album => new_attributes
       expect_good_request
       expect_json(:include,{
-          "year"=>2000
+          "name"=>new_attributes[:name]
         })
     end
     
@@ -146,9 +103,9 @@ describe Api::AlbumsController do
     end
     
     it "should delete a valid album passed by ID" do
-      @album = Album.create(name: "Demo album", year: 2006, genre: @genre, artist: @artist)
+      album = FactoryGirl.create(:album, artist_id: @artist.id)
       
-      xhr :delete, :destroy, :id=>@album.id, :artist_id=>@artist.id, :format=> :json
+      xhr :delete, :destroy, :id=>album.id, :artist_id=>@artist.id, :format=> :json
       expect_good_request
     end
   end
