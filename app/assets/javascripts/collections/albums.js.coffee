@@ -5,7 +5,7 @@ class DemoBackbone.Collections.Albums extends Backbone.Collection
   
   initialize: (models, options) ->
     artist_id = options.artist_id || 0
-    @setURLByArtist(options.artist_id) if (options.artist_id)
+    @setURLByArtist(artist_id) if (artist_id)
 
 
   setURLByArtist: (artist_id) ->

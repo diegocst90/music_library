@@ -1,0 +1,10 @@
+<h1>Song:</h1>
+
+<p>Name: <%= @song.get('name') %></p>
+<p># Album: <%= @song.get('n_album') %></p>
+<p>Duration: <%= @song.get('duration') %></p>
+<p>Created at: <%= @song.get('created_at') %></p>
+<p>Last Modification: <%= @song.get('updated_at') %></p>
+
+<br/>
+<a href="javascript:history.back()">Back</a>

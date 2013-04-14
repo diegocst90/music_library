@@ -1,7 +1,7 @@
 class DemoBackbone.Routers.Artists extends Backbone.Router
   routes:
     '': 'index'
-    'artist/:id': 'show'
+    'artists/:id': 'show'
 
   initialize: ->
     @collection = new DemoBackbone.Collections.Artists()

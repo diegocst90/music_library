@@ -6,7 +6,7 @@
 <ul>
 <% for album in @albums.models: %>
   <li class="album_<%= album.get('id') %>">
-    <a href="#artist/<%= album.get('artist_id') %>/album/<%= album.get('id') %>"><%= album.get('name') %> (<%= album.get('year') %>)</a>
+    <a href="#artists/<%= album.get('artist_id') %>/albums/<%= album.get('id') %>"><%= album.get('name') %> (<%= album.get('year') %>)</a>
   </li>
 <% end %>
 </ul>
