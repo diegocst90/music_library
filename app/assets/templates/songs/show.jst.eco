@@ -3,8 +3,8 @@
 <p>Name: <%= @song.get('name') %></p>
 <p># Album: <%= @song.get('n_album') %></p>
 <p>Duration: <%= @song.get('duration') %></p>
-<p>Created at: <%= @song.get('created_at') %></p>
-<p>Last Modification: <%= @song.get('updated_at') %></p>
+<p>Created at: <%= dateToYMDHMS(@song.get('created_at')) %></p>
+<p>Last Modification: <%= dateToYMDHMS(@song.get('updated_at')) %></p>
 
 <br/>
 <a class="back_link">Back</a>
