@@ -3,13 +3,9 @@
 <p>Name: <%= @artist.get('name') %></p>
 
 <h3>Albums:</h3>
-<ul>
-<% for album in @albums.models: %>
-  <li class="album_<%= album.get('id') %>">
-    <a href="#artists/<%= album.get('artist_id') %>/albums/<%= album.get('id') %>"><%= album.get('name') %> (<%= album.get('year') %>)</a>
-  </li>
-<% end %>
+<ul id="list_albums">
+
 </ul>
 
 <br/>
-<a href="javascript:history.back()">Back</a>
+<a class="back_link">Back</a>

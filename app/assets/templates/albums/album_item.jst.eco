@@ -1,0 +1,3 @@
+<li id="album_<%= @album.get('id') %>">
+    <a><%= @album.get('name') %> (<%= @album.get('year') %>)</a>
+</li>

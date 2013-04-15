@@ -6,5 +6,10 @@ class DemoBackbone.Views.ArtistsIndex extends Backbone.View
     @collection.on('reset', @render, this)
 
   render: ->
-    $(@el).html(@template(artists: @collection))
+    $(@el).html(@template())
+    @collection.each(@appendArtist, this)
     this
+
+  appendArtist: (artist) ->
+    view = new DemoBackbone.Views.ArtistItem(model: artist)
+    @$('#list_artists').append(view.render().el)

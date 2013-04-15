@@ -1,9 +1,5 @@
 <h1>Artists:</h1>
 
-<ul>
-<% for artist in @artists.models: %>
-  <li class="artist_<%= artist.get('id') %>">
-    <a href="#artists/<%= artist.get('id') %>"><%= artist.get('name') %></a>
-  </li>
-<% end %>
+<ul id="list_artists">
+
 </ul>

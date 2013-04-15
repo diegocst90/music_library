@@ -2,13 +2,23 @@ class DemoBackbone.Views.AlbumsShow extends Backbone.View
 
   template: JST['albums/show']
 
-  initialize: (options) ->
+  events:
+    "click a.back_link": "backArtist"
+
+  initialize: ->
     @model.on('reset', @render, this)
-    @artist_id = options.artist_id || 0
 
   render: ->
+    $(@el).html(@template(album: @model))
     @model.getSongs(
         success: (songs) =>
-            $(@el).html(@template(album: @model, songs: songs, artist_id: @artist_id))
+            songs.each(@appendSong, this)
     )
     this
+
+  appendSong: (song) ->
+    view = new DemoBackbone.Views.SongItem(model: song, artist_id: @model.get("artist_id"))
+    @$("#list_songs").append(view.render().el)
+
+  backArtist: ->
+    Backbone.history.navigate("artists/" + @model.get("artist_id"), {trigger: true})

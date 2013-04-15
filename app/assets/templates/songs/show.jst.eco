@@ -7,4 +7,4 @@
 <p>Last Modification: <%= @song.get('updated_at') %></p>
 
 <br/>
-<a href="javascript:history.back()">Back</a>
+<a class="back_link">Back</a>

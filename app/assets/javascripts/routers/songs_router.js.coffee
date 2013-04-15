@@ -9,5 +9,5 @@ class DemoBackbone.Routers.Songs extends Backbone.Router
     song = new DemoBackbone.Models.Song({id: id, artist_id: artist_id, album_id: album_id})
     song.fetch
         success: ->
-            view = new DemoBackbone.Views.SongsShow(model: song)
+            view = new DemoBackbone.Views.SongsShow(model: song, artist_id: artist_id)
             $('#content_artists').html(view.render().el)
