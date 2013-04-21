@@ -37,7 +37,18 @@ describe Api::AlbumsController do
       
       xhr :get, :show, :id=>album.id, :artist_id=>@artist.id
       expect_good_request
-      expect_json(:eq, convert_to_json(album, "album"))
+      expect_json(:include, convert_to_json(album, "album"))
+    end
+    
+    #GET :index with :id + songs
+    it "should return the info of the album plus the list of songs given by ID" do
+      album = FactoryGirl.create :album, artist_id: @artist.id
+      song = FactoryGirl.create :song, album_id: album.id
+      
+      xhr :get, :show, :id=>album.id, :artist_id=>@artist.id, :songs=>true
+      expect_good_request
+      expect_json(:include, convert_to_json(album, "album"))
+      expect_json(:include, convert_to_json(song, "song"), "songs")
     end
     
     it "should return a 422 error if the album can't be found" do

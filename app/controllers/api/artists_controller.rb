@@ -6,8 +6,9 @@ class Api::ArtistsController < ApplicationController
   end
   
   def show
-    artist = Artist.find(params[:id]) rescue nil
-    opts = {}
+    opts = {:include=>[]}
+    opts[:include] << :albums if params[:albums].present?
+    artist = Artist.find(params[:id], opts) rescue nil
     opts[:status] = 422 if !artist
     respond_with artist, opts
   end

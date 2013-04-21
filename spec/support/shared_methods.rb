@@ -13,8 +13,9 @@ module SharedMethods
   end
   
   #General method to analyze the results of the JSON results
-  def expect_json(method = :eq, value_expected)
+  def expect_json(method, value_expected, property = nil)
     results = JSON.parse(response.body)
+    results = results[property] if property
     expect(results).to send(method, value_expected)
   end
   

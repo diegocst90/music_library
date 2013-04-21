@@ -26,7 +26,18 @@ describe Api::ArtistsController do
       
       xhr :get, :show, :id=>artist.id
       expect_good_request
-      expect_json(:eq, convert_to_json(artist, "artist"))
+      expect_json(:include, convert_to_json(artist, "artist"))
+    end
+    
+    #GET :index with :id + albums
+    it "should return the info of the artist plus the list of albums given by ID" do
+      artist = FactoryGirl.create :artist
+      album = FactoryGirl.create :album, artist_id: artist.id
+      
+      xhr :get, :show, :id=>artist.id, :albums=>true
+      expect_good_request
+      expect_json(:include, convert_to_json(artist, "artist"))
+      expect_json(:include, convert_to_json(album, "album"), "albums")
     end
     
     it "should return a 422 error if the artist can't be found" do

@@ -37,7 +37,7 @@ describe Api::SongsController do
       
       xhr :get, :show, :id=>song.id, :album_id=>@album.id, :artist_id=>@artist.id
       expect_good_request
-      expect_json(:eq, convert_to_json(song, "song"))
+      expect_json(:include, convert_to_json(song, "song"))
     end
     
     it "should return a 422 error if the song can't be found" do

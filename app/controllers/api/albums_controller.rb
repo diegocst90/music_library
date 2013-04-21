@@ -6,8 +6,9 @@ class Api::AlbumsController < ApplicationController
   end
   
   def show
-    album = Album.find(params[:id]) rescue nil
-    opts = {}
+    opts = {:include=>[]}
+    opts[:include] << :songs if params[:songs].present?
+    album = Album.find(params[:id], opts) rescue nil
     opts[:status] = 422 if !album
     respond_with album, opts
   end

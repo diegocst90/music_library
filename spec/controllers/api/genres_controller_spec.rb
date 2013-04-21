@@ -26,7 +26,7 @@ describe Api::GenresController do
       
       xhr :get, :show, :id=>genre.id
       expect_good_request
-      expect_json(:eq, convert_to_json(genre, "genre"))
+      expect_json(:include, convert_to_json(genre, "genre"))
     end
     
     it "should return a 422 error if the genre can't be found" do

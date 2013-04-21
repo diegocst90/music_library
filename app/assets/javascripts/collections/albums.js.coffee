@@ -3,7 +3,7 @@ class DemoBackbone.Collections.Albums extends Backbone.Collection
   url: '/api/artists/'
   model: DemoBackbone.Models.Album
   
-  initialize: (models, options) ->
+  initialize: (models, options = {}) ->
     artist_id = options.artist_id || 0
     @setURLByArtist(artist_id) if (artist_id)
 

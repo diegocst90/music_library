@@ -10,10 +10,16 @@ class DemoBackbone.Views.ArtistsShow extends Backbone.View
 
   render: ->
     $(@el).html(@template(artist: @model))
-    @model.getAlbums(
-        success: (albums) =>
-            albums.each(@appendAlbum, this)
-    )
+    if @model.get("albums")
+        list_albums = @model.get("albums")
+        for album in list_albums
+            model_album = new DemoBackbone.Models.Album(album)
+            @appendAlbum(model_album)
+    else
+        @model.getAlbums
+            success: (albums) =>
+                window.DemoBackbone.Routers.albums_router.updateCollection(albums)
+                albums.each(@appendAlbum, this)
     this
 
   appendAlbum: (album) ->
