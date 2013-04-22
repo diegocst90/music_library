@@ -3,7 +3,7 @@ class DemoBackbone.Views.AlbumItem extends Backbone.View
   template: JST['albums/album_item']
 
   events:
-    "click a": "selectAlbum"
+    "click a.album": "selectAlbum"
 
   initialize: ->
     @model.on('reset', @render, this)

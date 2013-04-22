@@ -1,6 +1,7 @@
 class DemoBackbone.Routers.Artists extends Backbone.Router
   routes:
     '': 'index'
+    'artists/new': 'new'
     'artists/:id': 'show'
 
   initialize: ->
@@ -31,4 +32,9 @@ class DemoBackbone.Routers.Artists extends Backbone.Router
 
   renderArtist: (artist) ->
     view = new DemoBackbone.Views.ArtistsShow(model: artist)
+    $('#content_artists').html(view.render().el)
+
+  new: ->
+    new_artist = new DemoBackbone.Models.Artist()
+    view = new DemoBackbone.Views.ArtistsNew(model: new_artist)
     $('#content_artists').html(view.render().el)

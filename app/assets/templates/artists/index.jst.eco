@@ -3,3 +3,5 @@
 <ul id="list_artists">
 
 </ul>
+
+<a class="new_artist btn btn-primary"><i class="icon-plus-sign"></i> New Artist</a>

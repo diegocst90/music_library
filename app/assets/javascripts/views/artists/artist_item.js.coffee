@@ -3,7 +3,7 @@ class DemoBackbone.Views.ArtistItem extends Backbone.View
   template: JST['artists/artist_item']
 
   events:
-    "click a": "selectArtist"
+    "click a.artist": "selectArtist"
 
   initialize: ->
     @model.on('reset', @render, this)

@@ -7,4 +7,4 @@
 <p>Last Modification: <%= dateToYMDHMS(@song.get('updated_at')) %></p>
 
 <br/>
-<a class="back_link">Back</a>
+<a class="back_link btn btn-link">Back</a>

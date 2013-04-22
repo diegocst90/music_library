@@ -1,3 +1,3 @@
 <li id="song_<%= @song.get('id') %>">
-    <a><%= @song.get('n_album') %>. <%= @song.get('name') %> (<%= @song.get('duration')%>)</a>
+    <a class="song btn btn-link"><%= @song.get('n_album') %>. <%= @song.get('name') %> (<%= @song.get('duration')%>)</a>
 </li>

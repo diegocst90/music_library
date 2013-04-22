@@ -3,7 +3,7 @@ class DemoBackbone.Views.SongItem extends Backbone.View
   template: JST['songs/song_item']
 
   events:
-    "click a": "selectSong"
+    "click a.song": "selectSong"
 
   initialize: (options)->
     @artist_id = options.artist_id || 0

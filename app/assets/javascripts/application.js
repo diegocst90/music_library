@@ -17,6 +17,7 @@
 //= require backbone
 //= require demo_backbone
 //= require_tree ../templates
+//= require_tree ./libraries
 //= require_tree ./models
 //= require_tree ./collections
 //= require_tree ./views
